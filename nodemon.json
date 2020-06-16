@@ -1,0 +1,8 @@
+{
+    "verbose": true,
+    "ignore": ["*.test.*s", "fixtures/*"],
+    "watch": [
+        "schema/*.graphql",
+        "**/*.ts"
+    ]
+}
