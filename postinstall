@@ -1,0 +1,3 @@
+#!/bin/bash
+awk '{gsub("://[0-9a-z]+:x-oauth-basic", "://GITHUB_TOKEN_PLACEHOLDER:x-oauth-basic", $0); print}' package.json >> package.json.stub && mv package.json.stub package.json
+awk '{gsub("://[0-9a-z]+:x-oauth-basic", "://GITHUB_TOKEN_PLACEHOLDER:x-oauth-basic", $0); print}' yarn.lock >> yarn.lock.stub && mv yarn.lock.stub yarn.lock

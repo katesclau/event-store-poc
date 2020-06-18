@@ -4,6 +4,11 @@ import depthLimit from 'graphql-depth-limit';
 import { createServer } from 'http';
 import compression from 'compression';
 import cors from 'cors';
+import dotenv from 'dotenv';
+
+import EventStoreProvider from './providers/eventStore';
+
+dotenv.config();
 
 import schema from './schema';
 const app = express();
@@ -11,15 +16,13 @@ const app = express();
 const server = new ApolloServer({
   schema,
   validationRules: [depthLimit(7)],
+  context: {
+    EventStoreProvider,
+  },
   playground: {
     settings: {
       'editor.theme': 'dark',
     },
-    tabs: [
-      {
-        query: `helloWorld`,
-      },
-    ],
   },
 });
 

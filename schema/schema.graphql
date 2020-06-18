@@ -1,3 +1,39 @@
+type 	Actor {
+  type: String!
+  data: String!
+} 
+
+input	ActorCreateInput {
+  type: String!
+  data: String!
+} 
+
+input EventCreateInput {
+  transaction: String!
+  actors: [ActorCreateInput!]!
+  type: String!
+  errors: [String!]
+  outputs: [String!]
+  tags: [String!]
+  source: String
+}
+
+type Event {
+  id: ID!
+  transaction: String!
+  actors: [Actor!]!
+  timestamp: Int!
+  type: String!
+  errors: [String!]
+  outputs: [String!]
+  tags: [String!]
+  source: String
+}
+
 type Query {
   helloWorld: String!
+}
+
+type Mutation {
+  postEvent(event: EventCreateInput!): Event!
 }
