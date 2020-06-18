@@ -1,5 +1,5 @@
 import { IResolvers } from 'graphql-tools';
-import { IEventType } from './@types/eventStore/event';
+import EventStoreProvider from './providers/eventStore';
 const resolvers: IResolvers = {
     Query: {
         helloWorld(_: void, args: void): string {
@@ -7,11 +7,16 @@ const resolvers: IResolvers = {
         },
     },
     Mutation: {
-        postEvent(_parent, { event }, ctx, info) : IEventType | null {
-            console.log(event, ctx, info);
-            const eventResponse = ctx.EventStoreProvider.getInstance().postEvent(event);
-            return null;
+        async postEvent(_parent, { event }, ctx): Promise<Boolean | null> {
+            console.log(event, ctx);
+            const eventStoreProvider: EventStoreProvider = EventStoreProvider.client;
+            if (!eventStoreProvider) {
+                return null;
+            }
+            const { type, source } = event;
+            return await eventStoreProvider.writeEvent(type, event, source);
         }
     }
 };
+
 export default resolvers;

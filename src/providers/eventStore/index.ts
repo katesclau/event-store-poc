@@ -3,25 +3,21 @@ import { config } from '../../utils/config'
 import logger from '../../utils/logger'
 import axios from 'axios'
 import { extractError } from '../../utils/extractError'
+import { IEventCreateInputType } from '../../@types/eventStore/event'
+import { IEventStoreProvider, EventStoreOptions, EventStoreHeaders } from '../../@types/eventStore/provider'
 
-interface EventStoreOptions {
-  url: string
-}
+export default class EventStoreProvider implements IEventStoreProvider {
+  public static get client(): EventStoreProvider {
+    return this.getInstance();
+  }
 
-interface EventStoreHeaders {
-  [key: string]: string
-}
-
-export default class EventStoreProvider {
-  public static async writeEvent<T>(
+  public async writeEvent(
     eventType: string,
-    data: T,
-    message: string = '',
+    data: IEventCreateInputType,
     eventSource: string = '',
     eventSubType: string = ''
   ): Promise<boolean> {
     logger.verbose({
-      message: 'EventStore::writeEvent ' + message,
       eventType,
       eventSubType,
       eventSource,
@@ -29,10 +25,9 @@ export default class EventStoreProvider {
     })
 
     try {
-      const result = await this.getInstance().postEvent<T>(
+      const result = await this.postEvent(
         eventType,
         data,
-        message,
         eventSource,
         eventSubType
       )
@@ -68,12 +63,11 @@ export default class EventStoreProvider {
     }
   }
 
-  private async postEvent<T>(
+  private postEvent(
     eventType: string,
-    data: T,
-    message: string = '',
-    eventSubType: string = '',
-    eventSource: string = ''
+    data: IEventCreateInputType,
+    eventSource: string = '',
+    eventSubType: string = ''
   ) {
     const uid = uuid()
     return axios({
@@ -86,7 +80,6 @@ export default class EventStoreProvider {
       },
       data: {
         data,
-        message,
         eventSubType,
         eventSource,
       },

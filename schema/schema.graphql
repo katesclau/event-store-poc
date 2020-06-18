@@ -35,5 +35,5 @@ type Query {
 }
 
 type Mutation {
-  postEvent(event: EventCreateInput!): Event!
+  postEvent(event: EventCreateInput!): Boolean!
 }
