@@ -6,6 +6,7 @@ import { get, entries } from 'lodash'
 import { extractError } from '../../utils/extractError'
 import { IEventCreateInputType, IEventPaginationType, IEventType } from '../../@types/eventStore/event'
 import { IEventStoreProvider, EventStoreOptions, EventStoreHeaders } from '../../@types/eventStore/provider'
+import { time, timeStamp } from 'console'
 
 export default class EventStoreProvider implements IEventStoreProvider {
   public static get client(): EventStoreProvider {
@@ -37,7 +38,11 @@ export default class EventStoreProvider implements IEventStoreProvider {
           const { data } = entry;
           if (data) {
             try {
-              return JSON.parse(data);
+              const dataJson = JSON.parse(data);
+              if (dataJson.timestamp) {
+                dataJson.timestamp = `${dataJson.timestamp}`
+              }
+              return dataJson
             } catch (error) {
               logger.error('Could not parse data from Event entry: ', extractError(error), entry)
             }
@@ -55,14 +60,10 @@ export default class EventStoreProvider implements IEventStoreProvider {
     eventStreamName: string,
     eventType: string,
     data: IEventCreateInputType,
-    eventSource: string = '',
-    eventSubType: string = ''
   ): Promise<boolean> {
     logger.verbose({
       eventStreamName,
       eventType,
-      eventSubType,
-      eventSource,
       data,
     })
 
@@ -71,8 +72,6 @@ export default class EventStoreProvider implements IEventStoreProvider {
         eventStreamName,
         eventType,
         data,
-        eventSource,
-        eventSubType
       )
       return [200, 201, 204].includes(result.status)
     } catch (e) {
@@ -110,9 +109,8 @@ export default class EventStoreProvider implements IEventStoreProvider {
     eventType: string,
     eventStreamName: string,
     data: IEventCreateInputType,
-    eventSource: string = '',
-    eventSubType: string = ''
   ) {
+    const { timestamp } = data
     const id = uuid()
     return axios({
       method: 'post',
@@ -123,10 +121,9 @@ export default class EventStoreProvider implements IEventStoreProvider {
         ...this.headers,
       },
       data: { // Axios data
-        data: { id, ...data }, // Event Data
-        eventSubType,
-        eventSource,
-        timestamp: new Date().getTime() / 1000,
+        id,
+        ...data,
+        timestamp: timestamp ?  BigInt(timestamp) : new Date().getTime(),
       },
       url: `${this.options.url}/streams/${eventStreamName}`,
     })
@@ -137,13 +134,17 @@ export default class EventStoreProvider implements IEventStoreProvider {
     size: number = 10,
     page: number = 0,
   ) {
+    let pointer: number | string = 'head'
+    if (page) {
+      pointer = page*size
+    }
     return axios({
       method: 'get',
       ...this.options,
       headers: {
         ...this.headers,
       },
-      url: `${this.options.url}/streams/${eventStreamName}/${page*size}/forward/${size}?embed=body`,
+      url: `${this.options.url}/streams/${eventStreamName}/${pointer}/backward/${size}?embed=body`,
     })
   }
 }

@@ -18,14 +18,6 @@ input EventCreateInput {
   source: String
 }
 
-input EventWhereInput {
-  transaction: String
-  actorTypes: [String!]
-  tags: [String]
-  timestamp_gt: Int
-  timestamp_lt: Int
-}
-
 input EventPaginationInput {
   page: Int
   size: Int
@@ -35,7 +27,7 @@ type Event {
   id: ID!
   transaction: String!
   actors: [Actor!]!
-  timestamp: Int!
+  timestamp: String!
   type: String!
   errors: [String!]
   outputs: [String!]

@@ -4,8 +4,7 @@ import { IEventType } from './@types/eventStore/event';
 const resolvers: IResolvers = {
     Query: {
         async events(_parent, { streamName, pagination }, ctx, _info): Promise<IEventType[] | null> {
-            const entries = await ctx.eventStoreProvider.retrieveEvents(streamName, pagination);
-            return []
+            return await ctx.eventStoreProvider.retrieveEvents(streamName, pagination);
         },
     },
     Mutation: {
@@ -15,7 +14,7 @@ const resolvers: IResolvers = {
                 return null;
             }
             const { type, source } = event;
-            return await ctx.eventStoreProvider.writeEvent(type, type, event, source);
+            return await ctx.eventStoreProvider.writeEvent(type, type, event);
         }
     }
 };

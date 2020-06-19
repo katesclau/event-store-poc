@@ -4,7 +4,7 @@ export interface IEventType {
     id: string
     transaction: string
     actors: IActorType[]
-    timestamp: int
+    timestamp: string | BigInt
     type: string
     errors?: string[]
     outputs?: string[]
@@ -15,8 +15,8 @@ export interface IEventType {
 export interface IEventCreateInputType {
     transaction: string
     actors: IActorType[]
-    timestamp: int
     type: string
+    timestamp?: int
     errors?: string[]
     outputs?: string[]
     tags?: string[]
