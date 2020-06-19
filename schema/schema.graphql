@@ -18,6 +18,19 @@ input EventCreateInput {
   source: String
 }
 
+input EventWhereInput {
+  transaction: String
+  actorTypes: [String!]
+  tags: [String]
+  timestamp_gt: Int
+  timestamp_lt: Int
+}
+
+input EventPaginationInput {
+  page: Int
+  size: Int
+}
+
 type Event {
   id: ID!
   transaction: String!
@@ -31,7 +44,7 @@ type Event {
 }
 
 type Query {
-  helloWorld: String!
+  events(streamName: String!, pagination: EventPaginationInput): [Event!]!
 }
 
 type Mutation {

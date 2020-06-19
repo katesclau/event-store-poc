@@ -12,12 +12,14 @@ dotenv.config();
 
 import schema from './schema';
 const app = express();
+const eventStoreProvider: EventStoreProvider = EventStoreProvider.client;
+
 
 const server = new ApolloServer({
   schema,
   validationRules: [depthLimit(7)],
   context: {
-    EventStoreProvider,
+    eventStoreProvider,
   },
   playground: {
     settings: {

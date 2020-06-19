@@ -1,20 +1,21 @@
 import { IResolvers } from 'graphql-tools';
-import EventStoreProvider from './providers/eventStore';
+import logger from './utils/logger';
+import { IEventType } from './@types/eventStore/event';
 const resolvers: IResolvers = {
     Query: {
-        helloWorld(_: void, args: void): string {
-    return `👋 Hello world! 👋`;
+        async events(_parent, { streamName, pagination }, ctx, _info): Promise<IEventType[] | null> {
+            const entries = await ctx.eventStoreProvider.retrieveEvents(streamName, pagination);
+            return []
         },
     },
     Mutation: {
         async postEvent(_parent, { event }, ctx): Promise<Boolean | null> {
-            console.log(event, ctx);
-            const eventStoreProvider: EventStoreProvider = EventStoreProvider.client;
-            if (!eventStoreProvider) {
+            logger.info(event);
+            if (!ctx.eventStoreProvider) {
                 return null;
             }
             const { type, source } = event;
-            return await eventStoreProvider.writeEvent(type, event, source);
+            return await ctx.eventStoreProvider.writeEvent(type, type, event, source);
         }
     }
 };

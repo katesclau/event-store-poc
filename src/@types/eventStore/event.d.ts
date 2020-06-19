@@ -22,3 +22,16 @@ export interface IEventCreateInputType {
     tags?: string[]
     source?: string
 }
+
+export interface IEventPaginationType {
+    page: number
+    size: number
+}
+
+export interface IEventWhereType {
+    transaction?: string
+    actors?: string[]
+    tags?: string[]
+    timestamp_gt?: number
+    timestamp_lt?: number
+}
