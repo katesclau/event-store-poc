@@ -18,7 +18,7 @@
         "graphql": "^15.1.0",
         "graphql-tools": "^6.0.10",
         "http": "^0.0.1-security",
-        "lodash": "^4.17.15",
+        "lodash": "^4.17.19",
         "ncp": "^2.0.0",
         "uuid": "^8.1.0",
         "winston": "^3.2.1"
